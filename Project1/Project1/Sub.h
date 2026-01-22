@@ -45,10 +45,24 @@ class
 {
 public:
 	int BgmSound;
+	int JumpSound;
 
 	void Read()
 	{
-		BgmSound = LoadSoundMem("./sound/XXX.wav");
+		BgmSound = LoadSoundMem("./sound/bgm.wav");
+		JumpSound = LoadSoundMem("./sound/jump.wav");
+		ChangeVolumeSoundMem(255 * 20 / 100, BgmSound);		// 音量を20%に調整
+		ChangeVolumeSoundMem(255 * 20 / 100, JumpSound);	// 音量を20%に調整
+	}
+
+	void PlayBGMSound()
+	{
+		PlaySoundMem(BgmSound, DX_PLAYTYPE_LOOP);
+	}
+
+	void PlayJumpSound()
+	{
+		PlaySoundMem(JumpSound, DX_PLAYTYPE_BACK);
 	}
 private:
 
@@ -101,8 +115,7 @@ public:
 
 	void FPSWait() {
 		int wait = 0;
-		wait = (MicroSecond / GameFPS * FrameCount) - (NowtakeTime - FirsttakeTime);	/* wait時間(micro sec) = 理想の時間 - 実際の時間 */
-		wait /= MillSecond; /* wait時間(ms) */
+		wait = static_cast<int>(((MicroSecond / GameFPS * FrameCount) - (NowtakeTime - FirsttakeTime)) / MillSecond);	/* wait時間(msec) = 理想の時間 - 実際の時間 */
 
 		if (wait > 0 && wait <= WaitTimeMill) {
 			WaitTimer(wait);
@@ -142,3 +155,16 @@ public:
 private:
 
 }Key;
+
+#ifdef DEF_JOYPAD_VALID
+/*** Joypadクラス ***/
+class
+{
+public:
+	DINPUT_JOYSTATE input;				// JoyPad入力情報
+	unsigned char input_X_Z1 = 0;		// JoyPad「×」前回値
+
+private:
+
+}JPad;
+#endif /* DEF_JOYPAD_VALID */
