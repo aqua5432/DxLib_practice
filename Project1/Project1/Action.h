@@ -1,5 +1,46 @@
 #pragma once
 
+/*
+自身の加えた改良点
+
+・元コードでは敵の移動速度がプレイヤー入力に依存していたため、
+　空中移動時に敵挙動が不安定になる問題があった。
+
+・これを敵自身の速度パラメータを持たせる設計に変更し、
+　プレイヤー状態に依存しない独立したAI移動に修正した。
+
+・その際、Playerがジャンプ左右移動をしたとき、敵もその流れに合わせて移動していく不具合が発生した。
+・敵がスクリーン座標で管理されており、ステージスクロールがワールド座標として別管理されているため、座標系の混在によって発生していました。
+　本来は全オブジェクトをワールド座標で持ち、描画時にのみカメラ変換を行うべき設計です。
+
+・ワールド、スクリーン、カメラ座標を適切に戻した時、床をすり抜ける／空中で止まる／突然落下死する不具合が発生
+画面座標とステージ座標が混在していた。
+
+描画：画面座標
+当たり判定：ステージ座標
+
+なのに、判定で
+
+Sta.Cood.Pix[MainChar.Pos.X][MainChar.Pos.Y]
+のように 変換せず直接参照していた。
+
+→画面座標 → ワールド座標へ変換してから判定する
+
+・敵が画面から置き去りにされる
+
+プレイヤーが進むと敵が画面外に消える
+追いかけてこない
+
+原因
+
+敵の座標を ワールド固定に変更したが、行動範囲が固定のままだった。
+
+元コードでは：敵の移動範囲 = [0, WIN_MAX_X]
+
+→敵はワールド座標のまま、行動範囲だけをカメラ基準に変更。
+
+*/
+
 /*** Actionクラス ***/
 class ACTION
 {
@@ -162,32 +203,43 @@ public:
 		/*** 敵1移動 ***/
 		if (Enem1.Dir == DIR_RI)
 		{
-			Enem1.Pos.X = Enem1.Pos.X + Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			if (Enem1.Pos.X >= WIN_MAX_X - CELL)
+			//Enem1.Pos.X = Enem1.Pos.X + Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
+			Enem1.Pos.X = Enem1.Pos.X + Enem1.SpeedX; // 変更点
+			/*if (Enem1.Pos.X >= WIN_MAX_X - CELL)
 			{
 				Enem1.Dir = DIR_LE;
-			}
+			}*/
 		}
 		else
 		{
-			Enem1.Pos.X = Enem1.Pos.X - Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			if (Enem1.Pos.X <= WIN_MIN_X)
+			//Enem1.Pos.X = Enem1.Pos.X - Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
+			Enem1.Pos.X = Enem1.Pos.X - Enem1.SpeedX; // 変更点
+			/*if (Enem1.Pos.X <= WIN_MIN_X)
 			{
 				Enem1.Dir = DIR_RI;
-			}
+			}*/
 		}
+		
+		int camLeft = -Sta_PosX;
+		int camRight = -Sta_PosX + WIN_MAX_X;
+
+		if (Enem1.Pos.X <= camLeft)
+			Enem1.Dir = DIR_RI;
+
+		if (Enem1.Pos.X >= camRight - CELL)
+			Enem1.Dir = DIR_LE;
 
 		/*** 敵1接触判定右 ***/
-		if ((MainChar.Pos.X + CELL >= Enem1.Pos.X + ENEMY_HIT_RANGE) &&
-			(MainChar.Pos.X + CELL < Enem1.Pos.X + CELL) &&
+		if ((MainChar.Pos.X + Sta_PosX + CELL >= Enem1.Pos.X + ENEMY_HIT_RANGE) &&
+			(MainChar.Pos.X + Sta_PosX + CELL < Enem1.Pos.X + CELL) &&
 			(MainChar.Pos.Y >= Enem1.Pos.Y) &&
 			(MainChar.Pos.Y < Enem1.Pos.Y + CELL))
 		{
 			Enem1.Touch = DIR_RI;
 		}
 		/*** 敵1接触判定左 ***/
-		else if ((MainChar.Pos.X >= Enem1.Pos.X) &&
-			(MainChar.Pos.X < Enem1.Pos.X + CELL - ENEMY_HIT_RANGE) &&
+		else if ((MainChar.Pos.X + Sta_PosX >= Enem1.Pos.X) &&
+			(MainChar.Pos.X + Sta_PosX < Enem1.Pos.X + CELL - ENEMY_HIT_RANGE) &&
 			(MainChar.Pos.Y >= Enem1.Pos.Y) &&
 			(MainChar.Pos.Y < Enem1.Pos.Y + CELL))
 		{
@@ -197,32 +249,43 @@ public:
 		/*** 敵2移動 ***/
 		if (Enem2.Dir == DIR_RI)
 		{
-			Enem2.Pos.X = Enem2.Pos.X + Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			if (Enem2.Pos.X >= WIN_MAX_X - CELL)
+			//Enem2.Pos.X = Enem2.Pos.X + Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
+			Enem2.Pos.X = Enem2.Pos.X + Enem2.SpeedX; // 変更点
+			/*if (Enem2.Pos.X >= WIN_MAX_X - CELL)
 			{
 				Enem2.Dir = DIR_LE;
-			}
+			}*/
 		}
 		else
 		{
-			Enem2.Pos.X = Enem2.Pos.X - Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			if (Enem2.Pos.X <= WIN_MIN_X)
+			//Enem2.Pos.X = Enem2.Pos.X - Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
+			Enem2.Pos.X = Enem2.Pos.X - Enem2.SpeedX; // 変更点
+			/*if (Enem2.Pos.X <= WIN_MIN_X)
 			{
 				Enem2.Dir = DIR_RI;
-			}
+			}*/
 		}
 
+		int camLeft2 = -Sta_PosX;
+		int camRight2 = -Sta_PosX + WIN_MAX_X;
+
+		if (Enem2.Pos.X <= camLeft2)
+			Enem2.Dir = DIR_RI;
+
+		if (Enem2.Pos.X >= camRight2 - CELL)
+			Enem2.Dir = DIR_LE;
+
 		/*** 敵2接触判定右 ***/
-		if ((MainChar.Pos.X + CELL >= Enem2.Pos.X + ENEMY_HIT_RANGE) &&
-			(MainChar.Pos.X + CELL < Enem2.Pos.X + CELL) &&
+		if ((MainChar.Pos.X + Sta_PosX + CELL >= Enem2.Pos.X + ENEMY_HIT_RANGE) &&
+			(MainChar.Pos.X + Sta_PosX + CELL < Enem2.Pos.X + CELL) &&
 			(MainChar.Pos.Y >= Enem2.Pos.Y) &&
 			(MainChar.Pos.Y < Enem2.Pos.Y + CELL))
 		{
 			Enem2.Touch = DIR_RI;
 		}
 		/*** 敵2接触判定左 ***/
-		else if ((MainChar.Pos.X >= Enem2.Pos.X) &&
-			(MainChar.Pos.X < Enem2.Pos.X + CELL - ENEMY_HIT_RANGE) &&
+		else if ((MainChar.Pos.X + Sta_PosX >= Enem2.Pos.X) &&
+			(MainChar.Pos.X + Sta_PosX < Enem2.Pos.X + CELL - ENEMY_HIT_RANGE) &&
 			(MainChar.Pos.Y >= Enem2.Pos.Y) &&
 			(MainChar.Pos.Y < Enem2.Pos.Y + CELL))
 		{
@@ -334,8 +397,11 @@ public:
 	/*** 敵描画 ***/
 	void Ene()
 	{
-		DrawGraph(Enem1.Pos.X, Enem1.Pos.Y, Pic.Enemy1, TRUE); /*** 敵1描画 ***/
-		DrawGraph(Enem2.Pos.X, Enem2.Pos.Y, Pic.Enemy1, TRUE); /*** 敵2描画 ***/
+		//DrawGraph(Enem1.Pos.X, Enem1.Pos.Y, Pic.Enemy1, TRUE); /*** 敵1描画 ***/
+		//DrawGraph(Enem2.Pos.X, Enem2.Pos.Y, Pic.Enemy1, TRUE); /*** 敵2描画 ***/
+
+		DrawGraph(Enem1.Pos.X + Sta_PosX, Enem1.Pos.Y, Pic.Enemy1, TRUE);// 変更点
+		DrawGraph(Enem2.Pos.X + Sta_PosX, Enem2.Pos.Y, Pic.Enemy1, TRUE);// 変更点
 	}
 
 	/*** 表示系描画 ***/
@@ -517,6 +583,7 @@ public:
 
 		int Dir = DIR_NONE;
 		int Touch = DIR_NONE;
+		int SpeedX = 2;  //敵固有の速度(改良点)
 	};
 
 	// 移動用構造体
