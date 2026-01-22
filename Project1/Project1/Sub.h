@@ -49,10 +49,10 @@ public:
 
 	void Read()
 	{
-		BgmSound = LoadSoundMem("./sound/bgm.wav");
-		JumpSound = LoadSoundMem("./sound/jump.wav");
-		ChangeVolumeSoundMem(255 * 20 / 100, BgmSound);		// Й╣Ч╩ВЁ20%В╔Т▓Ро
-		ChangeVolumeSoundMem(255 * 20 / 100, JumpSound);	// Й╣Ч╩ВЁ20%В╔Т▓Ро
+		BgmSound = LoadSoundMem("./sound/bgm.mp3");
+		JumpSound = LoadSoundMem("./sound/jump.mp3");
+		ChangeVolumeSoundMem(255 * 50 / 100, BgmSound);		// Й╣Ч╩ВЁ50%В╔Т▓Ро
+		ChangeVolumeSoundMem(255 * 100 / 100, JumpSound);	// Й╣Ч╩ВЁ100%В╔Т▓Ро
 	}
 
 	void PlayBGMSound()
