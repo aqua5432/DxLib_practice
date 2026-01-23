@@ -1,4 +1,10 @@
 #pragma once
+#include <vector>
+#include "Entity.h"
+#include "InputSystem.h"
+#include "EnemySystem.h"
+#include "Physics.h"
+#include "Render.h"
 
 /*
 自身の加えた改良点
@@ -60,15 +66,22 @@ public:
 		Mov.Y = 0;
 		Cou = 0;
 
-		Enem1.Pos.X = ENE1_POS_X_INI;
-		Enem1.Pos.Y = ENE1_POS_Y_INI;
-		Enem1.Dir = DIR_RI;
-		Enem1.Touch = DIR_NONE;
+		Enemies.clear();
 
-		Enem2.Pos.X = ENE2_POS_X_INI;
-		Enem2.Pos.Y = ENE2_POS_Y_INI;
-		Enem2.Dir = DIR_RI;
-		Enem2.Touch = DIR_NONE;
+		Enemy e1;
+		e1.Pos.X = ENE1_POS_X_INI;
+		e1.Pos.Y = ENE1_POS_Y_INI;
+		e1.Dir = DIR_RI;
+		e1.Touch = DIR_NONE;
+		Enemies.push_back(e1);
+
+		Enemy e2;
+		e2.Pos.X = ENE2_POS_X_INI;
+		e2.Pos.Y = ENE2_POS_Y_INI;
+		e2.Dir = DIR_RI;
+		e2.Touch = DIR_NONE;
+		Enemies.push_back(e2);
+
 
 		Goal = FALSE;
 		EndFlag = FALSE;
@@ -190,8 +203,6 @@ public:
 		/*** 終了判定 ***/
 		if ((Key.input[KEY_INPUT_ESCAPE] > 0) ||	// Esc押下
 			(MainChar.Fall == TRUE) ||				// 落下判定
-			(Enem1.Touch != DIR_NONE) ||			// 敵1当たり判定
-			(Enem2.Touch != DIR_NONE) ||			// 敵2当たり判定
 			(Goal == TRUE)							// ゴール判定
 #ifdef DEF_JOYPAD_VALID
 			|| (JPad.input.Buttons[12] == 128)		// JoyPad「PS」押下
@@ -200,6 +211,14 @@ public:
 		{
 			EndFlag = TRUE;
 		}
+
+		/*敵との衝突判定による終了判定*/
+		for (auto& e : Enemies)
+		{
+			if (e.Touch != DIR_NONE)
+				EndFlag = TRUE;
+		}
+
 	}
 
 	/*** 移動計算 ***/
@@ -207,129 +226,52 @@ public:
 	{
 		if (IsClearing) return;
 
-		/*** 敵1移動 ***/
-		if (Enem1.Dir == DIR_RI)
+		for (auto& e : Enemies)
 		{
-			//Enem1.Pos.X = Enem1.Pos.X + Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			//Enem1.Pos.X = Enem1.Pos.X + Enem1.SpeedX; // 変更点
-			/*if (Enem1.Pos.X >= WIN_MAX_X - CELL)
-			{
-				Enem1.Dir = DIR_LE;
-			}*/
-			float dist = abs(MainChar.Pos.X - Enem1.Pos.X);
+			float dist = abs(MainChar.Pos.X - e.Pos.X);
 			float speed = 1.5f + dist * 0.001f;
-			speed = min(speed, 4.0f); // 上限
+			speed = min(speed, 4.0f);
 
-			Enem1.Pos.X += Enem1.SpeedX * speed;
+			if (e.Dir == DIR_RI)
+				e.Pos.X += e.SpeedX * speed;
+			else
+				e.Pos.X -= e.SpeedX * speed;
 
-		}
-		else
-		{
-			//Enem1.Pos.X = Enem1.Pos.X - Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			//Enem1.Pos.X = Enem1.Pos.X - Enem1.SpeedX; // 変更点
-			/*if (Enem1.Pos.X <= WIN_MIN_X)
+			int camLeft = -Sta_PosX;
+			int camRight = -Sta_PosX + WIN_MAX_X;
+
+			if (e.Pos.X <= camLeft)
+				e.Dir = DIR_RI;
+			if (e.Pos.X >= camRight - CELL)
+				e.Dir = DIR_LE;
+
+			/*** 敵接触判定右 ***/
+			if ((MainChar.Pos.X - Sta_PosX + CELL >= e.Pos.X + ENEMY_HIT_RANGE) &&
+				(MainChar.Pos.X - Sta_PosX + CELL < e.Pos.X + CELL) &&
+				(MainChar.Pos.Y >= e.Pos.Y) &&
+				(MainChar.Pos.Y < e.Pos.Y + CELL))
 			{
-				Enem1.Dir = DIR_RI;
-			}*/
-			float dist = abs(MainChar.Pos.X - Enem1.Pos.X);
-			float speed = 1.5f + dist * 0.001f;
-			speed = min(speed, 4.0f); // 上限
-
-			Enem1.Pos.X -= Enem1.SpeedX * speed;
-		}
-		
-		int camLeft = -Sta_PosX;
-		int camRight = -Sta_PosX + WIN_MAX_X;
-
-		if (Enem1.Pos.X <= camLeft)
-			Enem1.Dir = DIR_RI;
-
-		if (Enem1.Pos.X >= camRight - CELL)
-			Enem1.Dir = DIR_LE;
-
-		/*** 敵1接触判定右 ***/
-		if ((MainChar.Pos.X - Sta_PosX + CELL >= Enem1.Pos.X + ENEMY_HIT_RANGE) &&
-			(MainChar.Pos.X - Sta_PosX + CELL < Enem1.Pos.X + CELL) &&
-			(MainChar.Pos.Y >= Enem1.Pos.Y) &&
-			(MainChar.Pos.Y < Enem1.Pos.Y + CELL))
-		{
-			Enem1.Touch = DIR_RI;
-		}
-		/*** 敵1接触判定左 ***/
-		else if ((MainChar.Pos.X - Sta_PosX >= Enem1.Pos.X) &&
-			(MainChar.Pos.X - Sta_PosX < Enem1.Pos.X + CELL - ENEMY_HIT_RANGE) &&
-			(MainChar.Pos.Y >= Enem1.Pos.Y) &&
-			(MainChar.Pos.Y < Enem1.Pos.Y + CELL))
-		{
-			Enem1.Touch = DIR_LE;
-		}
-
-		/*** 敵2移動 ***/
-		if (Enem2.Dir == DIR_RI)
-		{
-			//Enem2.Pos.X = Enem2.Pos.X + Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			//Enem2.Pos.X = Enem2.Pos.X + Enem2.SpeedX; // 変更点
-			/*if (Enem2.Pos.X >= WIN_MAX_X - CELL)
-			{
-				Enem2.Dir = DIR_LE;
-			}*/
-			float dist = abs(MainChar.Pos.X - Enem2.Pos.X);
-			float speed = 1.5f + dist * 0.001f;
-			speed = min(speed, 4.0f); // 上限
-
-			Enem2.Pos.X += Enem2.SpeedX * speed;
-		}
-		else
-		{
-			//Enem2.Pos.X = Enem2.Pos.X - Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			//Enem2.Pos.X = Enem2.Pos.X - Enem2.SpeedX; // 変更点
-			/*if (Enem2.Pos.X <= WIN_MIN_X)
-			{
-				Enem2.Dir = DIR_RI;
-			}*/
-			float dist = abs(MainChar.Pos.X - Enem2.Pos.X);
-			float speed = 1.5f + dist * 0.001f;
-			speed = min(speed, 4.0f); // 上限
-
-			Enem2.Pos.X -= Enem2.SpeedX * speed;
-		}
-
-		int camLeft2 = -Sta_PosX;
-		int camRight2 = -Sta_PosX + WIN_MAX_X;
-
-		if (Enem2.Pos.X <= camLeft2)
-			Enem2.Dir = DIR_RI;
-
-		if (Enem2.Pos.X >= camRight2 - CELL)
-			Enem2.Dir = DIR_LE;
-
-		if (abs(Enem1.Pos.X - Enem2.Pos.X) < CELL)
-		{
-			if (Enem1.Dir == DIR_RI) {
-				Enem1.Dir = DIR_LE;
-				Enem2.Dir = DIR_RI;
+				e.Touch = DIR_RI;
 			}
-			else {
-				Enem1.Dir = DIR_RI;
-				Enem2.Dir = DIR_LE;
+			/*** 敵接触判定左 ***/
+			else if ((MainChar.Pos.X - Sta_PosX >= e.Pos.X) &&
+				(MainChar.Pos.X - Sta_PosX < e.Pos.X + CELL - ENEMY_HIT_RANGE) &&
+				(MainChar.Pos.Y >= e.Pos.Y) &&
+				(MainChar.Pos.Y < e.Pos.Y + CELL))
+			{
+				e.Touch = DIR_LE;
 			}
 		}
 
-		/*** 敵2接触判定右 ***/
-		if ((MainChar.Pos.X - Sta_PosX + CELL >= Enem2.Pos.X + ENEMY_HIT_RANGE) &&
-			(MainChar.Pos.X - Sta_PosX + CELL < Enem2.Pos.X + CELL) &&
-			(MainChar.Pos.Y >= Enem2.Pos.Y) &&
-			(MainChar.Pos.Y < Enem2.Pos.Y + CELL))
+		for (int i = 0; i < Enemies.size(); i++)
 		{
-			Enem2.Touch = DIR_RI;
-		}
-		/*** 敵2接触判定左 ***/
-		else if ((MainChar.Pos.X - Sta_PosX >= Enem2.Pos.X) &&
-			(MainChar.Pos.X - Sta_PosX < Enem2.Pos.X + CELL - ENEMY_HIT_RANGE) &&
-			(MainChar.Pos.Y >= Enem2.Pos.Y) &&
-			(MainChar.Pos.Y < Enem2.Pos.Y + CELL))
-		{
-			Enem2.Touch = DIR_LE;
+			for (int j = i + 1; j < Enemies.size(); j++)
+			{
+				if (abs(Enemies[i].Pos.X - Enemies[j].Pos.X) < CELL)
+				{
+					std::swap(Enemies[i].Dir, Enemies[j].Dir);
+				}
+			}
 		}
 
 		/*** X方向移動計算 ***/
@@ -437,11 +379,10 @@ public:
 	/*** 敵描画 ***/
 	void Ene()
 	{
-		//DrawGraph(Enem1.Pos.X, Enem1.Pos.Y, Pic.Enemy1, TRUE); /*** 敵1描画 ***/
-		//DrawGraph(Enem2.Pos.X, Enem2.Pos.Y, Pic.Enemy1, TRUE); /*** 敵2描画 ***/
-
-		DrawGraph(Enem1.Pos.X + Sta_PosX, Enem1.Pos.Y, Pic.Enemy1, TRUE);// 変更点
-		DrawGraph(Enem2.Pos.X + Sta_PosX, Enem2.Pos.Y, Pic.Enemy1, TRUE);// 変更点
+		for (auto& e : Enemies)
+		{
+			DrawGraph(e.Pos.X + Sta_PosX, e.Pos.Y, Pic.Enemy1, TRUE);
+		}
 	}
 
 	/*** 表示系描画 ***/
@@ -480,15 +421,21 @@ public:
 		Mov.Y = 0;
 		Cou = 0;
 
-		Enem1.Pos.X = ENE1_POS_X_INI;
-		Enem1.Pos.Y = ENE1_POS_Y_INI;
-		Enem1.Dir = DIR_RI;
-		Enem1.Touch = DIR_NONE;
+		Enemies.clear();
 
-		Enem2.Pos.X = ENE2_POS_X_INI;
-		Enem2.Pos.Y = ENE2_POS_Y_INI;
-		Enem2.Dir = DIR_RI;
-		Enem2.Touch = DIR_NONE;
+		Enemy e1;
+		e1.Pos.X = ENE1_POS_X_INI;
+		e1.Pos.Y = ENE1_POS_Y_INI;
+		e1.Dir = DIR_RI;
+		e1.Touch = DIR_NONE;
+		Enemies.push_back(e1);
+
+		Enemy e2;
+		e2.Pos.X = ENE2_POS_X_INI;
+		e2.Pos.Y = ENE2_POS_Y_INI;
+		e2.Dir = DIR_RI;
+		e2.Touch = DIR_NONE;
+		Enemies.push_back(e2);
 
 		Goal = FALSE;
 		EndFlag = FALSE;
@@ -530,6 +477,7 @@ public:
 			if (Goal == TRUE)
 			{
 				if (ClearWait == 0) {
+					/*** クリアタイム更新 ***/
 					Sta.UpdateTime();
 				}
 				ClearWait++;
@@ -538,11 +486,6 @@ public:
 
 				if (ClearWait < 120) return ret;  // 2秒待つ
 			}
-			/*** クリアタイム更新 ***/
-			/*if (Goal == TRUE)
-			{
-				Sta.UpdateTime();
-			}*/
 
 			/*** Actシーン終了時初期化 ***/
 			EndInit();
@@ -558,7 +501,7 @@ public:
 	int Sta_PosX = STG_X_MIN;
 
 	// メインキャラ構造体
-	struct
+	/*struct
 	{
 		struct
 		{
@@ -648,10 +591,12 @@ public:
 		int Y = 0;					// Y方向移動量
 		int JumpState = JUMP_OFF;	// ジャンプ状態
 		bool Dash = OFF;			// ダッシュ
-	}Mov;
+	}Mov;*/
 
-	ENEMY Enem1;
-	ENEMY Enem2;
+	MainCharacter MainChar;
+	std::vector<Enemy> Enemies;
+	MoveState Mov;
+
 private:
 	int Goal = FALSE;
 	int EndFlag = FALSE;

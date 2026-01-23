@@ -133,8 +133,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
+    <ClInclude Include="EnemySystem.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="InputSystem.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="Picture.h" />
     <ClInclude Include="ProjConf.h" />
+    <ClInclude Include="Render.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Sub.h" />
