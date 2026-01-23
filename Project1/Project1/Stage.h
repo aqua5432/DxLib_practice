@@ -1,7 +1,15 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
+#include <cstdio>
+#include <cstdlib>
+#include <algorithm>
+
+#include "DxLib.h"
+#include "ProjConf.h"
+#include "Picture.h"
 
 /*** Stageクラス ***/
-class
+class Stage
 {
 public:
 	void Read()
@@ -56,11 +64,11 @@ public:
 		float tmp_rank = static_cast<float>((GetNowCount() - StartCount) / MillSecond);
 
 		/* クリアタイムをソート */
-		Sta.Rank[RANK_4TH] = tmp_rank;
-		std::sort(Sta.Rank, Sta.Rank + RANK_MAX);
+		Rank[RANK_4TH] = tmp_rank;
+		std::sort(Rank, Rank + RANK_MAX);
 
 		/* クリアタイムがランクインしていたら、クリアタイム更新 */
-		if (Sta.Rank[RANK_4TH] != tmp_rank)
+		if (Rank[RANK_4TH] != tmp_rank)
 		{
 			FILE* fp_stage_1_1_rslt;	// ステージクリアタイムのファイル
 
@@ -75,7 +83,7 @@ public:
 			/***クリアタイム書き込み ***/
 			for (int x = 0; x < RANK_MAX; x++)
 			{
-				fprintf(fp_stage_1_1_rslt, "%f\n", Sta.Rank[x]);
+				fprintf(fp_stage_1_1_rslt, "%f\n", Rank[x]);
 			}
 
 			/*** クローズ ***/
@@ -83,7 +91,7 @@ public:
 		}
 	}
 
-	void Out(int* PosX)
+	void Out(int* PosX) const
 	{
 		int pic = 0;
 		for (int x = 0; x < STG_BLOCK_X_MAX; x++)
@@ -133,4 +141,5 @@ public:
 
 private:
 
-}Sta;
+};
+extern Stage Sta;
