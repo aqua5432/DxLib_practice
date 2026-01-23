@@ -6,7 +6,6 @@
 #include "Physics.h"
 #include "Renderer.h"
 
-/*** Actionクラス ***/
 class ACTION
 {
 public:
@@ -27,7 +26,6 @@ public:
 		return NextScene(ret);
 	}
 
-	/*** 更新用関数 ***/
 	void Update()
 	{
 		if (IsClearing) return;
@@ -42,7 +40,6 @@ public:
 		MainChar.Cor.LeDo.Ce = Sta.Cood.Pix[MainChar.Pos.X - Sta_PosX][MainChar.Pos.Y + CELL - 1];
 	}
 
-	/*** 判定 ***/
 	void Judge()
 	{
 		if (IsClearing) return;
@@ -101,6 +98,7 @@ public:
 		physics.Update(MainChar, Mov, Sta_PosX, Sta);
 	}
 
+	//描画計算
 	void Draw() 
 	{
 		renderer.DrawStage(Sta, Sta_PosX);
@@ -200,10 +198,9 @@ public:
 		}
 	}
 
-	/*** Actシーン終了時初期化 ***/
+	/*** 初期化 ***/
 	void Init()
 	{
-		/*** 初期化 ***/
 		Sta_PosX = STG_X_MIN;
 
 		MainChar.Pos.X = CHA_POS_X_INI;
