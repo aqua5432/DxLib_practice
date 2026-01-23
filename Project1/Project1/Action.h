@@ -4,7 +4,7 @@
 #include "InputSystem.h"
 #include "EnemySystem.h"
 #include "Physics.h"
-#include "Render.h"
+#include "Renderer.h"
 
 /*
 自身の加えた改良点
@@ -364,6 +364,7 @@ public:
 	}
 
 	/*** メインキャラ描画 ***/
+	/*
 	void Cha()
 	{
 		if (MainChar.PicDir == DIR_RI)		// 右向きの場合
@@ -376,7 +377,7 @@ public:
 		}
 	}
 
-	/*** 敵描画 ***/
+	/*** 敵描画
 	void Ene()
 	{
 		for (auto& e : Enemies)
@@ -385,24 +386,24 @@ public:
 		}
 	}
 
-	/*** 表示系描画 ***/
+	/*** 表示系描画 
 	void Disp()
 	{
-		/*** クリアタイムの描画 ***/
+		/*** クリアタイムの描画 
 		for (int i = 0; i < RANK_DISP_NUM; i++)
 		{
 			DrawFormatStringFToHandle(RANK_POS_X, static_cast<float>(RANK_POS_Y + i * 10), Col.Black, Fon.FH[10], "No.%d:%6.2f s", i + 1, Sta.Rank[i]);
-		}
-		/*** 現在タイムの描画 ***/
+		
+		/*** 現在タイムの描画 
 		DrawFormatStringFToHandle(TIME_POS_X, TIME_POS_Y, Col.Black, Fon.FH[10], "Time:%6.2f s", static_cast<float>((GetNowCount() - Sta.StartCount) / MillSecond));
 
-		/*** コマンド説明の描画 ***/
+		/*** コマンド説明の描画 
 		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y, Col.Black, Fon.FH[10], "右移動：[→]or[D]");
 		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y + 10, Col.Black, Fon.FH[10], "左移動：[←]or[A]");
 		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y + 20, Col.Black, Fon.FH[10], "ジャンプ：[↑]or[W]");
 		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y + 30, Col.Black, Fon.FH[10], "ダッシュ：[F]");
 		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y + 40, Col.Black, Fon.FH[10], "Titleに戻る：[Esc]");
-	}
+	}*/
 
 	/*** Actシーン終了時初期化 ***/
 	void EndInit()
@@ -461,14 +462,19 @@ public:
 		/*** ステージ描画 ***/
 		Sta.Out(&Sta_PosX);
 
-		/*** メインキャラ描画 ***/
+		/*** メインキャラ描画
 		Cha();
 
-		/*** 敵描画 ***/
+		/*** 敵描画
 		Ene();
 
-		/*** 表示系描画 ***/
-		Disp();
+		/*** 表示系描画
+		Disp();*/
+
+		renderer.DrawPlayer(MainChar);
+		renderer.DrawEnemies(Enemies, Sta_PosX);
+		renderer.DrawUI();
+
 
 		/*** ENDフラグ有効時、タイトルシーンに移行 ***/
 		if (EndFlag == TRUE)
@@ -500,102 +506,10 @@ public:
 	// ステージX座標
 	int Sta_PosX = STG_X_MIN;
 
-	// メインキャラ構造体
-	/*struct
-	{
-		struct
-		{
-			int X = CHA_POS_X_INI;
-			int Y = CHA_POS_Y_INI;
-			int Yin = Y;			// Y方向移動前初期値
-		}Pos;
-		struct
-		{
-			struct
-			{
-				int Ri = 0;
-				int Up = 0;
-				int Ce = 0;
-			}RiUp;
-			struct
-			{
-				int Le = 0;
-				int Up = 0;
-				int Ce = 0;
-			}LeUp;
-			struct
-			{
-				int Ri = 0;
-				int Do = 0;
-				int Ce = 0;
-			}RiDo;
-			struct
-			{
-				int Le = 0;
-				int Do = 0;
-				int Ce = 0;
-			}LeDo;
-		}Cor;
-
-		int Dir = DIR_NONE;
-		int PicDir = DIR_RI;
-		int Touch = DIR_NONE;
-		int Fall = FALSE;
-	}MainChar;
-
-	// 敵キャラ構造体
-	struct ENEMY
-	{
-		struct
-		{
-			int X = 0;
-			int Y = STG_X_MAX - 3 * CELL;
-		}Pos;
-		struct
-		{
-			struct
-			{
-				int Ri = 0;
-				int Up = 0;
-				int Ce = 0;
-			}RiUp;
-			struct
-			{
-				int Le = 0;
-				int Up = 0;
-				int Ce = 0;
-			}LeUp;
-			struct
-			{
-				int Ri = 0;
-				int Do = 0;
-				int Ce = 0;
-			}RiDo;
-			struct
-			{
-				int Le = 0;
-				int Do = 0;
-				int Ce = 0;
-			}LeDo;
-		}Cor;
-
-		int Dir = DIR_NONE;
-		int Touch = DIR_NONE;
-		int SpeedX = 2;  //敵固有の速度(改良点)
-	};
-
-	// 移動用構造体
-	struct
-	{
-		int X = MOVEX;				// X方向移動量
-		int Y = 0;					// Y方向移動量
-		int JumpState = JUMP_OFF;	// ジャンプ状態
-		bool Dash = OFF;			// ダッシュ
-	}Mov;*/
-
 	MainCharacter MainChar;
 	std::vector<Enemy> Enemies;
 	MoveState Mov;
+	Renderer renderer;
 
 private:
 	int Goal = FALSE;

@@ -139,7 +139,7 @@
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Picture.h" />
     <ClInclude Include="ProjConf.h" />
-    <ClInclude Include="Render.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Stage.h" />
     <ClInclude Include="Sub.h" />
