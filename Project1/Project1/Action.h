@@ -12,39 +12,19 @@ class ACTION
 public:
 	ACTION()
 	{
-		Sta_PosX = STG_X_MIN;
+		Init();
+	}
 
-		MainChar.Pos.X = CHA_POS_X_INI;
-		MainChar.Pos.Y = CHA_POS_Y_INI;
-		MainChar.Pos.Yin = CHA_POS_Y_INI;
-		MainChar.Dir = DIR_NONE;
-		MainChar.PicDir = DIR_RI;
-		MainChar.Touch = DIR_NONE;
-		MainChar.Fall = FALSE;
-		Mov.JumpState = JUMP_OFF;
-		Mov.Y = 0;
-		//Cou = 0;
-		physics.ResetCou();
+	/*** Actシーン本処理 ***/
+	int Out()
+	{
+		int ret = SCE::SCE_01_ACT;
 
-		Enemies.clear();
-
-		Enemy e1;
-		e1.Pos.X = ENE1_POS_X_INI;
-		e1.Pos.Y = ENE1_POS_Y_INI;
-		e1.Dir = DIR_RI;
-		e1.Touch = DIR_NONE;
-		Enemies.push_back(e1);
-
-		Enemy e2;
-		e2.Pos.X = ENE2_POS_X_INI;
-		e2.Pos.Y = ENE2_POS_Y_INI;
-		e2.Dir = DIR_RI;
-		e2.Touch = DIR_NONE;
-		Enemies.push_back(e2);
-
-
-		Goal = FALSE;
-		EndFlag = FALSE;
+		Update();
+		Judge();
+		Cal();
+		Draw();
+		return NextScene(ret);
 	}
 
 	/*** 更新用関数 ***/
@@ -70,11 +50,7 @@ public:
 		InputState in = inputSystem.Update();
 
 		/*** ダッシュ判定 ***/
-		if ((in.dash) // F押下（長押しも有効）
-#ifdef DEF_JOYPAD_VALID
-			|| (JPad.input.Buttons[0] == 128) // JoyPad:「□」押下
-#endif /* DEF_JOYPAD_VALID */
-			)
+		if ((in.dash) )// F押下（長押しも有効）
 		{
 			Mov.Dash = ON;
 			Mov.X = MOVEX_D;	// X方向移動量（ダッシュ時）
@@ -85,6 +61,110 @@ public:
 			Mov.X = MOVEX;		// X方向移動量（通常時）
 		}
 
+		/*** 接触ブロック予測判定 ***/
+		CheckBlockCollision();
+
+		/*** 移動方向判定 ***/
+		UpdateDirection(in);
+
+		/*** ゴール判定 ***/
+		if (abs(Sta_PosX) > GOAL_POS_X)
+		{
+			Goal = TRUE;
+			IsClearing = true;
+		}
+
+		/*** 終了判定 ***/
+		if ((in.exit) ||	// Esc押下
+			(MainChar.Fall == TRUE) ||				// 落下判定
+			(Goal == TRUE)							// ゴール判定
+			)
+		{
+			EndFlag = TRUE;
+		}
+
+		/*敵との衝突判定による終了判定*/
+		for (auto& e : Enemies)
+		{
+			if (e.Touch != DIR_NONE)
+				EndFlag = TRUE;
+		}
+
+	}
+
+	/*** 移動計算 ***/
+	void Cal()
+	{
+		if (IsClearing) return;
+
+		enemySystem.Update(Enemies, MainChar, Sta_PosX);
+		physics.Update(MainChar, Mov, Sta_PosX, Sta);
+	}
+
+	void Draw() 
+	{
+		renderer.DrawStage(Sta, Sta_PosX);
+		renderer.DrawPlayer(MainChar);
+		renderer.DrawEnemies(Enemies, Sta_PosX);
+		renderer.DrawUI(Sta);
+	}
+
+	int NextScene(int ret) {
+		/*** ENDフラグ有効時、タイトルシーンに移行 ***/
+		if (EndFlag == TRUE)
+		{
+
+			if (Goal == TRUE)
+			{
+				if (ClearWait == 0) {
+					/*** クリアタイム更新 ***/
+					Sta.UpdateTime();
+				}
+				ClearWait++;
+
+				DrawString(300, 200, "GAME CLEAR", Col.Green);
+
+				if (ClearWait < 120) return ret;  // 2秒待つ
+			}
+
+			/*** Actシーン終了時初期化 ***/
+			Init();
+
+			/*** タイトルシーンに移行 ***/
+			ret = SCE::SCE_00_TIT;
+		}
+		return ret;
+	}
+
+	void UpdateDirection(const InputState& in) {
+		if ((in.jump)	// W(or↑)押下（長押しは無効）
+			)
+		{
+			if ((Mov.JumpState == JUMP_OFF) && ((MainChar.Touch & DIR_DO) == DIR_DO)) // ジャンプしていないとき、かつ地面に接してるとき
+			{
+				Mov.JumpState = JUMP_UP; // ジャンプする
+
+#ifdef DEF_SOUND_VALID
+				/*** Jump音再生 ***/
+				Snd.PlayJumpSound();
+#endif /*  DEF_SOUND_VALID */
+			}
+		}
+		else if ((in.moveRight) // D(or→)押下（長押しも有効）
+			)
+		{
+			MainChar.Dir = DIR_RI;		// メインキャラ右向き
+			MainChar.PicDir = DIR_RI;	// メインキャラ右向き（描画用）
+		}
+		else if ((in.moveLeft) // A(or←)押下（長押しも有効）
+			)
+		{
+			MainChar.Dir = DIR_LE;		// メインキャラ左向き
+			MainChar.PicDir = DIR_LE;	// メインキャラ左向き（描画用）
+		}
+	}
+
+	void CheckBlockCollision() {
 		/* メインキャラの四角の左右は、Mov.Xをもとに接触予測 */
 		MainChar.Cor.RiUp.Ri = Sta.Cood.Pix[MainChar.Pos.X - Sta_PosX + CELL - 1 + Mov.X][MainChar.Pos.Y];
 		MainChar.Cor.RiDo.Ri = Sta.Cood.Pix[MainChar.Pos.X - Sta_PosX + CELL - 1 + Mov.X][MainChar.Pos.Y + CELL - 1];
@@ -118,82 +198,10 @@ public:
 		{
 			MainChar.Touch |= DIR_DO;
 		}
-
-		/*** 移動方向判定 ***/
-		if ((in.jump)	// W(or↑)押下（長押しは無効）
-#ifdef DEF_JOYPAD_VALID
-			|| ((JPad.input.Buttons[1] == 128) && (JPad.input_X_Z1 == 0)) // JoyPad「×」押下（JPad.input.Buttons[1]==128）
-#endif /* DEF_JOYPAD_VALID */
-			)
-		{
-			if ((Mov.JumpState == JUMP_OFF) && ((MainChar.Touch & DIR_DO) == DIR_DO)) // ジャンプしていないとき、かつ地面に接してるとき
-			{
-				Mov.JumpState = JUMP_UP; // ジャンプする
-
-#ifdef DEF_SOUND_VALID
-				/*** Jump音再生 ***/
-				Snd.PlayJumpSound();
-#endif /*  DEF_SOUND_VALID */
-			}
-		}
-		else if ((in.moveRight) // D(or→)押下（長押しも有効）
-#ifdef DEF_JOYPAD_VALID
-			|| (JPad.input.POV[0] > 0 && JPad.input.POV[0] < 18000) // JoyPad「→」押下
-#endif /* DEF_JOYPAD_VALID */
-			)
-		{
-			MainChar.Dir = DIR_RI;		// メインキャラ右向き
-			MainChar.PicDir = DIR_RI;	// メインキャラ右向き（描画用）
-		}
-		else if ((in.moveLeft) // A(or←)押下（長押しも有効）
-#ifdef DEF_JOYPAD_VALID
-			|| (JPad.input.POV[0] > 18000 && JPad.input.POV[0] < 36000) // JoyPad「←」押下
-#endif /* DEF_JOYPAD_VALID */
-			)
-		{
-			MainChar.Dir = DIR_LE;		// メインキャラ左向き
-			MainChar.PicDir = DIR_LE;	// メインキャラ左向き（描画用）
-		}
-
-		/*** ゴール判定 ***/
-		if (abs(Sta_PosX) > GOAL_POS_X)
-		{
-			Goal = TRUE;
-			IsClearing = true;
-		}
-
-		/*** 終了判定 ***/
-		if ((in.exit) ||	// Esc押下
-			(MainChar.Fall == TRUE) ||				// 落下判定
-			(Goal == TRUE)							// ゴール判定
-#ifdef DEF_JOYPAD_VALID
-			|| (JPad.input.Buttons[12] == 128)		// JoyPad「PS」押下
-#endif /* DEF_JOYPAD_VALID */
-			)
-		{
-			EndFlag = TRUE;
-		}
-
-		/*敵との衝突判定による終了判定*/
-		for (auto& e : Enemies)
-		{
-			if (e.Touch != DIR_NONE)
-				EndFlag = TRUE;
-		}
-
-	}
-
-	/*** 移動計算 ***/
-	void Cal()
-	{
-		if (IsClearing) return;
-
-		enemySystem.Update(Enemies, MainChar, Sta_PosX);
-		physics.Update(MainChar, Mov, Sta_PosX, Sta);
 	}
 
 	/*** Actシーン終了時初期化 ***/
-	void EndInit()
+	void Init()
 	{
 		/*** 初期化 ***/
 		Sta_PosX = STG_X_MIN;
@@ -207,7 +215,6 @@ public:
 		MainChar.Fall = FALSE;
 		Mov.JumpState = JUMP_OFF;
 		Mov.Y = 0;
-		//Cou = 0;
 		physics.ResetCou();
 
 		Enemies.clear();
@@ -231,53 +238,6 @@ public:
 
 		IsClearing = false;
 		ClearWait = 0;
-	}
-
-	/*** Actシーン本処理 ***/
-	int Out()
-	{
-		int ret = SCE::SCE_01_ACT;
-
-		/*** 更新 ***/
-		Update();
-
-		/*** 判定 ***/
-		Judge();
-
-		/*** 移動計算 ***/
-		Cal();
-
-		renderer.DrawStage(Sta, Sta_PosX);
-		renderer.DrawPlayer(MainChar);
-		renderer.DrawEnemies(Enemies, Sta_PosX);
-		renderer.DrawUI(Sta);
-
-
-		/*** ENDフラグ有効時、タイトルシーンに移行 ***/
-		if (EndFlag == TRUE)
-		{
-
-			if (Goal == TRUE)
-			{
-				if (ClearWait == 0) {
-					/*** クリアタイム更新 ***/
-					Sta.UpdateTime();
-				}
-				ClearWait++;
-
-				DrawString(300, 200, "GAME CLEAR", Col.Green);
-
-				if (ClearWait < 120) return ret;  // 2秒待つ
-			}
-
-			/*** Actシーン終了時初期化 ***/
-			EndInit();
-
-			/*** タイトルシーンに移行 ***/
-			ret = SCE::SCE_00_TIT;
-		}
-
-		return ret;
 	}
 
 	// ステージX座標
