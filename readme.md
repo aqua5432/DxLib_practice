@@ -230,6 +230,8 @@ Draw();
 という**ゲームループとして理想的な構造**に。
 
 ---
+## クラス構成図
+
 ```mermaid
     classDiagram
     direction LR
@@ -336,6 +338,7 @@ Draw();
 * Visual Studio
 
 ---
+
 
 
 
