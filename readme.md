@@ -230,6 +230,89 @@ Draw();
 という**ゲームループとして理想的な構造**に。
 
 ---
+    1 classDiagram
+    2     direction LR
+    3
+    4     class Main {
+    5         <<EntryPoint>>
+    6         +WinMain()
+    7     }
+    8
+    9     class Sce <<Global>> {
+   10         +Out()
+   11     }
+   12
+   13     class Tit <<Global>> {
+   14         +Out()
+   15     }
+   16
+   17     class Act <<Global>> {
+   18         +Out()
+   19     }
+   20
+   21     class InputSystem {
+   22         +Update(): InputState
+   23     }
+   24     class Physics {
+   25         +Update()
+   26     }
+   27     class EnemySystem {
+   28         +Update()
+   29     }
+   30     class Renderer {
+   31         +DrawPlayer()
+   32         +DrawEnemies()
+   33         +DrawStage()
+   34     }
+   35
+   36     class MainCharacter <<Data>>
+   37     class Enemy <<Data>>
+   38     class MoveState <<Data>>
+   39     class InputState <<Data>>
+   40
+   41     class Stage <<Global Resource>>
+   42     class Picture <<Global Resource>>
+   43     class Key <<Global Utility>>
+   44     class Font <<Global Utility>>
+   45     class Color <<Global Utility>>
+   46     class Sound <<Global Utility>>
+   47
+   48
+   49     Main --> Sce : "drives"
+   50     Sce --> Tit : "delegates to"
+   51     Sce --> Act : "delegates to"
+   52
+   53     Act o-- InputSystem : "has a"
+   54     Act o-- Physics : "has a"
+   55     Act o-- EnemySystem : "has a"
+   56     Act o-- Renderer : "has a"
+   57
+   58     Act ..> MainCharacter : "owns data"
+   59     Act ..> Enemy : "owns data"
+   60     Act ..> MoveState : "owns data"
+   61
+   62     Tit ..> Key : "uses"
+   63     Tit ..> Stage : "uses"
+   64     Tit ..> Picture : "uses"
+   65     Tit ..> Font : "uses"
+   66     Tit ..> Color : "uses"
+   67
+   68     InputSystem ..> Key : "uses"
+   69     InputSystem ..> InputState : "creates"
+   70
+   71     Physics ..> MainCharacter : "modifies"
+   72     Physics ..> MoveState : "modifies"
+   73     Physics ..> Stage : "reads"
+   74
+   75     EnemySystem ..> MainCharacter : "reads"
+   76     EnemySystem ..> Enemy : "modifies"
+   77
+   78     Renderer ..> MainCharacter : "reads"
+   79     Renderer ..> Enemy : "reads"
+   80     Renderer ..> Stage : "reads"
+   81     Renderer ..> Picture : "uses"
+
+---
 
 ## このプロジェクトで得た知見
 
@@ -249,6 +332,7 @@ Draw();
 * Visual Studio
 
 ---
+
 
 
 
