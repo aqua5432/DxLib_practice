@@ -529,17 +529,20 @@ public:
 
 			if (Goal == TRUE)
 			{
+				if (ClearWait == 0) {
+					Sta.UpdateTime();
+				}
 				ClearWait++;
 
-				DrawString(300, 200, "GAME CLEAR", GetColor(0, 255, 0));
+				DrawString(300, 200, "GAME CLEAR", Col.Green);
 
 				if (ClearWait < 120) return ret;  // 2秒待つ
 			}
 			/*** クリアタイム更新 ***/
-			if (Goal == TRUE)
+			/*if (Goal == TRUE)
 			{
 				Sta.UpdateTime();
-			}
+			}*/
 
 			/*** Actシーン終了時初期化 ***/
 			EndInit();

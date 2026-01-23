@@ -12,12 +12,12 @@ public:
 		DrawGraph(0, 0, Pic.Title, TRUE);
 
 		/*** Press Enterの描画 ***/
-		DrawFormatStringFToHandle(TIT_ENTER_POS_X, TIT_ENTER_POS_Y, Col.Black, Fon.FH[30], "Press Enter");
+		DrawFormatStringFToHandle(TIT_ENTER_POS_X, TIT_ENTER_POS_Y, Col.White, Fon.FH[30], "Press Enter");
 
 		/*** クリアタイムの描画 ***/
 		for (int i = 0; i < RANK_DISP_NUM; i++)
 		{
-			DrawFormatStringFToHandle(RANK_POS_X, static_cast<float>(RANK_POS_Y + i * 10), Col.Black, Fon.FH[10], "No.%d:%6.2f s", i + 1, Sta.Rank[i]);
+			DrawFormatStringFToHandle(RANK_POS_X, static_cast<float>(RANK_POS_Y + i * 10), Col.White, Fon.FH[10], "No.%d:%6.2f s", i + 1, Sta.Rank[i]);
 		}
 
 		/*** アクションシーンに移行 ***/
