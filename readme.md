@@ -230,6 +230,7 @@ Draw();
 という**ゲームループとして理想的な構造**に。
 
 ---
+```mermaid
     classDiagram
          direction LR
     
@@ -311,7 +312,7 @@ Draw();
         Renderer ..> Enemy : "reads"
         Renderer ..> Stage : "reads"
         Renderer ..> Picture : "uses"
-
+```
 ---
 
 ## このプロジェクトで得た知見
@@ -332,6 +333,7 @@ Draw();
 * Visual Studio
 
 ---
+
 
 
 
