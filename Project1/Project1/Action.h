@@ -6,47 +6,6 @@
 #include "Physics.h"
 #include "Renderer.h"
 
-/*
-自身の加えた改良点
-
-・元コードでは敵の移動速度がプレイヤー入力に依存していたため、
-　空中移動時に敵挙動が不安定になる問題があった。
-
-・これを敵自身の速度パラメータを持たせる設計に変更し、
-　プレイヤー状態に依存しない独立したAI移動に修正した。
-
-・その際、Playerがジャンプ左右移動をしたとき、敵もその流れに合わせて移動していく不具合が発生した。
-・敵がスクリーン座標で管理されており、ステージスクロールがワールド座標として別管理されているため、座標系の混在によって発生していました。
-　本来は全オブジェクトをワールド座標で持ち、描画時にのみカメラ変換を行うべき設計です。
-
-・ワールド、スクリーン、カメラ座標を適切に戻した時、床をすり抜ける／空中で止まる／突然落下死する不具合が発生
-画面座標とステージ座標が混在していた。
-
-描画：画面座標
-当たり判定：ステージ座標
-
-なのに、判定で
-
-Sta.Cood.Pix[MainChar.Pos.X][MainChar.Pos.Y]
-のように 変換せず直接参照していた。
-
-→画面座標 → ワールド座標へ変換してから判定する
-
-・敵が画面から置き去りにされる
-
-プレイヤーが進むと敵が画面外に消える
-追いかけてこない
-
-原因
-
-敵の座標を ワールド固定に変更したが、行動範囲が固定のままだった。
-
-元コードでは：敵の移動範囲 = [0, WIN_MAX_X]
-
-→敵はワールド座標のまま、行動範囲だけをカメラ基準に変更。
-
-*/
-
 /*** Actionクラス ***/
 class ACTION
 {
@@ -108,8 +67,10 @@ public:
 	{
 		if (IsClearing) return;
 
+		InputState in = inputSystem.Update();
+
 		/*** ダッシュ判定 ***/
-		if ((Key.input[KEY_INPUT_F] > 0) // F押下（長押しも有効）
+		if ((in.dash) // F押下（長押しも有効）
 #ifdef DEF_JOYPAD_VALID
 			|| (JPad.input.Buttons[0] == 128) // JoyPad:「□」押下
 #endif /* DEF_JOYPAD_VALID */
@@ -159,7 +120,7 @@ public:
 		}
 
 		/*** 移動方向判定 ***/
-		if ((Key.input[KEY_INPUT_W] == 1 || Key.input[KEY_INPUT_UP] == 1)	// W(or↑)押下（長押しは無効）
+		if ((in.jump)	// W(or↑)押下（長押しは無効）
 #ifdef DEF_JOYPAD_VALID
 			|| ((JPad.input.Buttons[1] == 128) && (JPad.input_X_Z1 == 0)) // JoyPad「×」押下（JPad.input.Buttons[1]==128）
 #endif /* DEF_JOYPAD_VALID */
@@ -175,7 +136,7 @@ public:
 #endif /*  DEF_SOUND_VALID */
 			}
 		}
-		else if ((Key.input[KEY_INPUT_D] > 0 || Key.input[KEY_INPUT_RIGHT] > 0) // D(or→)押下（長押しも有効）
+		else if ((in.moveRight) // D(or→)押下（長押しも有効）
 #ifdef DEF_JOYPAD_VALID
 			|| (JPad.input.POV[0] > 0 && JPad.input.POV[0] < 18000) // JoyPad「→」押下
 #endif /* DEF_JOYPAD_VALID */
@@ -184,7 +145,7 @@ public:
 			MainChar.Dir = DIR_RI;		// メインキャラ右向き
 			MainChar.PicDir = DIR_RI;	// メインキャラ右向き（描画用）
 		}
-		else if ((Key.input[KEY_INPUT_A] > 0 || Key.input[KEY_INPUT_LEFT] > 0) // A(or←)押下（長押しも有効）
+		else if ((in.moveLeft) // A(or←)押下（長押しも有効）
 #ifdef DEF_JOYPAD_VALID
 			|| (JPad.input.POV[0] > 18000 && JPad.input.POV[0] < 36000) // JoyPad「←」押下
 #endif /* DEF_JOYPAD_VALID */
@@ -202,7 +163,7 @@ public:
 		}
 
 		/*** 終了判定 ***/
-		if ((Key.input[KEY_INPUT_ESCAPE] > 0) ||	// Esc押下
+		if ((in.exit) ||	// Esc押下
 			(MainChar.Fall == TRUE) ||				// 落下判定
 			(Goal == TRUE)							// ゴール判定
 #ifdef DEF_JOYPAD_VALID
@@ -328,6 +289,7 @@ public:
 	Renderer renderer;
 	Physics physics;
 	EnemySystem enemySystem;
+	InputSystem inputSystem;
 
 private:
 	int Goal = FALSE;
