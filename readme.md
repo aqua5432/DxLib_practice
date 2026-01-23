@@ -19,6 +19,15 @@ https://qiita.com/nekoshiki0904/items/0d5bc01b6d1ac6d29495
 といった、**ゲームプログラムとして致命的になり得る設計課題を段階的に修正**し、
 「動くコード」から「拡張可能な構造」へ改善することを目的としました。
 
+## Demo
+
+### Before (original)
+![before](before.gif)
+
+### After (refactored)
+![after](after.gif)
+
+
 ---
 
 ## 実施内容サマリ
@@ -233,6 +242,7 @@ Draw();
 * Visual Studio
 
 ---
+
 
 
 
