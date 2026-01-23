@@ -78,7 +78,7 @@ enum SCE						// シーン種類
 #define MOVEX_D		(CELL / 5)					// X方向移動量（ダッシュ時）
 #define MOVEY_H_MAX	(4 * CELL)					// ジャンプ時の最大高さ（4ブロック目）
 
-#define GOAL_POS_X (5400 - WIN_MAX_X / 2)		// GOAL X位置
+#define GOAL_POS_X (2900 - WIN_MAX_X / 2)		// GOAL X位置(5400→2700に変更)
 
 /*** クリアタイム ***/
 enum RANK										// シーン種類

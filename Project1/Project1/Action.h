@@ -516,6 +516,15 @@ public:
 		/*** ENDフラグ有効時、タイトルシーンに移行 ***/
 		if (EndFlag == TRUE)
 		{
+
+			if (Goal == TRUE)
+			{
+				ClearWait++;
+
+				DrawString(300, 200, "GAME CLEAR", GetColor(0, 255, 0));
+
+				if (ClearWait < 120) return ret;  // 2秒待つ
+			}
 			/*** クリアタイム更新 ***/
 			if (Goal == TRUE)
 			{
@@ -638,5 +647,6 @@ private:
 	int Cou = 0;
 	double T = 0.0;
 	const double T_k = 20.0;
+	int ClearWait = 0;
 
 }Act;
