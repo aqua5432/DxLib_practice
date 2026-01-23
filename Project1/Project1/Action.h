@@ -77,6 +77,8 @@ public:
 	/*** 更新用関数 ***/
 	void Update()
 	{
+		if (IsClearing) return;
+
 		MainChar.Dir = DIR_NONE;
 		MainChar.Touch = DIR_NONE;
 
@@ -90,6 +92,8 @@ public:
 	/*** 判定 ***/
 	void Judge()
 	{
+		if (IsClearing) return;
+
 		/*** ダッシュ判定 ***/
 		if ((Key.input[KEY_INPUT_F] > 0) // F押下（長押しも有効）
 #ifdef DEF_JOYPAD_VALID
@@ -180,6 +184,7 @@ public:
 		if (abs(Sta_PosX) > GOAL_POS_X)
 		{
 			Goal = TRUE;
+			IsClearing = true;
 		}
 
 		/*** 終了判定 ***/
@@ -200,6 +205,8 @@ public:
 	/*** 移動計算 ***/
 	void Cal()
 	{
+		if (IsClearing) return;
+
 		/*** 敵1移動 ***/
 		if (Enem1.Dir == DIR_RI)
 		{
@@ -485,6 +492,9 @@ public:
 
 		Goal = FALSE;
 		EndFlag = FALSE;
+
+		IsClearing = false;
+		ClearWait = 0;
 	}
 
 	/*** Actシーン本処理 ***/
@@ -648,5 +658,6 @@ private:
 	double T = 0.0;
 	const double T_k = 20.0;
 	int ClearWait = 0;
+	bool IsClearing = false;
 
 }Act;
