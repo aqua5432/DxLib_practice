@@ -64,7 +64,8 @@ public:
 		MainChar.Fall = FALSE;
 		Mov.JumpState = JUMP_OFF;
 		Mov.Y = 0;
-		Cou = 0;
+		//Cou = 0;
+		physics.ResetCou();
 
 		Enemies.clear();
 
@@ -274,136 +275,8 @@ public:
 			}
 		}
 
-		/*** X方向移動計算 ***/
-		/* 右移動 */
-		if (MainChar.Dir == DIR_RI)
-		{
-			if ((MainChar.Touch & DIR_RI) != DIR_RI) // 右に行こうとしても接触しないか
-			{
-				if (MainChar.Pos.X < WIN_MAX_X / 2)														// キャラのX位置がウィンドウ中央より左の場合
-				{
-					MainChar.Pos.X = MainChar.Pos.X + Mov.X;											// キャラを右に動かす
-				}
-				else if ((MainChar.Pos.X >= WIN_MAX_X / 2) && (abs(Sta_PosX) < STG_X_MAX - WIN_MAX_X))	// キャラのX位置がウィンドウ中央以上右で、ステージの一番右に到達していない場合
-				{
-					Sta_PosX = Sta_PosX - Mov.X;														// ステージを左に動かす
-				}
-			}
-		}
-		/* 左移動 */
-		else if (MainChar.Dir == DIR_LE)
-		{
-			if ((MainChar.Touch & DIR_LE) != DIR_LE) // 左に行こうとしても接触しないか
-			{
-				if (MainChar.Pos.X > STG_X_MIN)										// キャラが一番左にいない場合（キャラのX位置がステージの一番左より右）
-				{
-					MainChar.Pos.X = MainChar.Pos.X - Mov.X;						// キャラを左に動かす
-				}
-				else if ((MainChar.Pos.X <= STG_X_MIN) && (Sta_PosX < STG_X_MIN))	// キャラが一番左にいて、ステージも一番左ではない場合（キャラのX位置がステージの一番左以下、かつステージ位置も一番左ではない）
-				{
-					Sta_PosX = Sta_PosX + Mov.X;									// ステージを右に動かす
-				}
-			}
-		}
-
-		/*** Y方向移動計算 ***/
-		/* ジャンプ上昇 */
-		if (Mov.JumpState == JUMP_UP)
-		{
-			Cou = Cou + 1;
-			T = T_k * ((double)Cou / 60.0);
-			// HUMAN PosY cal
-			Mov.Y = (int)(pow(T, 2.0));
-			for (int y = 1; y <= Mov.Y; y++)
-			{
-				if ((MOVEY_H_MAX == MainChar.Pos.Yin - MainChar.Pos.Y) ||									// ジャンプの最大高さか
-					(Sta.Cood.Pix[MainChar.Pos.X - Sta_PosX][MainChar.Pos.Y - 1] != PIC_BACK) ||			// 左上に何かある
-					(Sta.Cood.Pix[MainChar.Pos.X - Sta_PosX + CELL - 1][MainChar.Pos.Y - 1] != PIC_BACK))	// 右上に何かある
-				{
-					Mov.JumpState = JUMP_GRAVITY;				// 自由落下に移行
-					Cou = 0;
-					break;
-				}
-				else
-				{
-					MainChar.Pos.Y = MainChar.Pos.Y - 1;
-				}
-			}
-		}
-		/* 自由落下または接触判定（下）なし */
-		else if ((Mov.JumpState == JUMP_GRAVITY) || (MainChar.Touch & DIR_DO) != DIR_DO)
-		{
-			/* 落下していないかどうか判定 */
-			if (MainChar.Pos.Y < STG_FALL_Y)
-			{
-				Cou = Cou + 1;
-				T = T_k * ((double)Cou / 60.0);
-				// HUMAN PosY cal
-				Mov.Y = (int)(pow(T, 2.0));
-				for (int y = 1; y <= Mov.Y; y++)
-				{
-					if ((Sta.Cood.Pix[MainChar.Pos.X - Sta_PosX][MainChar.Pos.Y + CELL] != PIC_BACK) ||				// 左下に何かある
-						(Sta.Cood.Pix[MainChar.Pos.X - Sta_PosX + CELL - 1][MainChar.Pos.Y + CELL] != PIC_BACK))	// 右下に何かある
-					{
-						MainChar.Pos.Yin = MainChar.Pos.Y;	// このY位置を初期Y位置に設定しなおす（ジャンプ終了後の初期位置設定）
-						Mov.JumpState = JUMP_OFF;
-						Cou = 0;
-						break;
-					}
-					else // 何もなければ移動できるのでY位置を更新
-					{
-						MainChar.Pos.Y = MainChar.Pos.Y + 1;
-					}
-				}
-			}
-			else // 落下
-			{
-				MainChar.Fall = TRUE;
-			}
-		}
+		physics.Update(MainChar, Mov, Sta_PosX, Sta);
 	}
-
-	/*** メインキャラ描画 ***/
-	/*
-	void Cha()
-	{
-		if (MainChar.PicDir == DIR_RI)		// 右向きの場合
-		{
-			DrawGraph(MainChar.Pos.X, MainChar.Pos.Y, Pic.MChara, TRUE);		// 右向きの描画
-		}
-		else if (MainChar.PicDir == DIR_LE)	// 左向きの場合
-		{
-			DrawTurnGraph(MainChar.Pos.X, MainChar.Pos.Y, Pic.MChara, TRUE);	// 左向きの描画
-		}
-	}
-
-	/*** 敵描画
-	void Ene()
-	{
-		for (auto& e : Enemies)
-		{
-			DrawGraph(e.Pos.X + Sta_PosX, e.Pos.Y, Pic.Enemy1, TRUE);
-		}
-	}
-
-	/*** 表示系描画 
-	void Disp()
-	{
-		/*** クリアタイムの描画 
-		for (int i = 0; i < RANK_DISP_NUM; i++)
-		{
-			DrawFormatStringFToHandle(RANK_POS_X, static_cast<float>(RANK_POS_Y + i * 10), Col.Black, Fon.FH[10], "No.%d:%6.2f s", i + 1, Sta.Rank[i]);
-		
-		/*** 現在タイムの描画 
-		DrawFormatStringFToHandle(TIME_POS_X, TIME_POS_Y, Col.Black, Fon.FH[10], "Time:%6.2f s", static_cast<float>((GetNowCount() - Sta.StartCount) / MillSecond));
-
-		/*** コマンド説明の描画 
-		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y, Col.Black, Fon.FH[10], "右移動：[→]or[D]");
-		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y + 10, Col.Black, Fon.FH[10], "左移動：[←]or[A]");
-		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y + 20, Col.Black, Fon.FH[10], "ジャンプ：[↑]or[W]");
-		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y + 30, Col.Black, Fon.FH[10], "ダッシュ：[F]");
-		DrawFormatStringFToHandle(COMD_POS_X, COMD_POS_Y + 40, Col.Black, Fon.FH[10], "Titleに戻る：[Esc]");
-	}*/
 
 	/*** Actシーン終了時初期化 ***/
 	void EndInit()
@@ -420,7 +293,8 @@ public:
 		MainChar.Fall = FALSE;
 		Mov.JumpState = JUMP_OFF;
 		Mov.Y = 0;
-		Cou = 0;
+		//Cou = 0;
+		physics.ResetCou();
 
 		Enemies.clear();
 
@@ -459,21 +333,10 @@ public:
 		/*** 移動計算 ***/
 		Cal();
 
-		/*** ステージ描画 ***/
-		Sta.Out(&Sta_PosX);
-
-		/*** メインキャラ描画
-		Cha();
-
-		/*** 敵描画
-		Ene();
-
-		/*** 表示系描画
-		Disp();*/
-
+		renderer.DrawStage(Sta, Sta_PosX);
 		renderer.DrawPlayer(MainChar);
 		renderer.DrawEnemies(Enemies, Sta_PosX);
-		renderer.DrawUI();
+		renderer.DrawUI(Sta);
 
 
 		/*** ENDフラグ有効時、タイトルシーンに移行 ***/
@@ -510,15 +373,11 @@ public:
 	std::vector<Enemy> Enemies;
 	MoveState Mov;
 	Renderer renderer;
+	Physics physics;
 
 private:
 	int Goal = FALSE;
 	int EndFlag = FALSE;
-
-	// 2次関数ジャンプ用変数
-	int Cou = 0;
-	double T = 0.0;
-	const double T_k = 20.0;
 	int ClearWait = 0;
 	bool IsClearing = false;
 

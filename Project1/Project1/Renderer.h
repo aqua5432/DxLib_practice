@@ -20,7 +20,7 @@ public:
     }
 
     /*** UI•`‰æ ***/
-    void DrawUI()
+    void DrawUI(const Stage& sta)
     {
         for (int i = 0; i < RANK_DISP_NUM; i++)
         {
@@ -31,7 +31,7 @@ public:
                 Fon.FH[10],
                 "No.%d:%6.2f s",
                 i + 1,
-                Sta.Rank[i]
+                sta.Rank[i]
             );
         }
 
@@ -39,7 +39,11 @@ public:
             TIME_POS_X, TIME_POS_Y,
             Col.Black, Fon.FH[10],
             "Time:%6.2f s",
-            static_cast<float>((GetNowCount() - Sta.StartCount) / MillSecond)
+            static_cast<float>((GetNowCount() - sta.StartCount) / MillSecond)
         );
+    }
+    void DrawStage(const Stage& stage, int Sta_PosX)
+    {
+        stage.Out(&Sta_PosX);
     }
 };
