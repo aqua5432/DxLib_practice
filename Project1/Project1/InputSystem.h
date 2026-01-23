@@ -1,12 +1,12 @@
 #pragma once
-struct InputState {
+struct InputState { // 入力されたアクションの格納
     bool dash;
     bool jump;
     bool moveRight;
     bool moveLeft;
     bool exit;
 };
-class InputSystem {
+class InputSystem { // プレイヤーの入力受付
 public:
     InputState Update() {
         InputState in{};

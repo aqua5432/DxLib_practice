@@ -42,6 +42,8 @@ public:
             static_cast<float>((GetNowCount() - sta.StartCount) / MillSecond)
         );
     }
+
+    /*** ステージの描画 ***/
     void DrawStage(const Stage& stage, int Sta_PosX)
     {
         stage.Out(&Sta_PosX);

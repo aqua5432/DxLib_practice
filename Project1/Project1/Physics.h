@@ -1,7 +1,7 @@
 #pragma once
 #include "Entity.h"
 
-class Physics {
+class Physics { // 物理挙動(移動・ジャンプ)を担当
 	// 2次関数ジャンプ用変数
 	int Cou = 0;
 	double T = 0;

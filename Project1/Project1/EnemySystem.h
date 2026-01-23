@@ -1,6 +1,6 @@
 #pragma once
 #include "Entity.h"
-class EnemySystem {
+class EnemySystem { // “G‚ÌˆÚ“®‘¬“xA“G‚ÆƒvƒŒƒCƒ„[‚ÌÚGA“G“¯m‚ÌÚG”»’è
 public:
 	void Update(std::vector<Enemy>& Enemies, MainCharacter& MainChar, int Sta_PosX) {
 		for (auto& e : Enemies)
@@ -40,7 +40,7 @@ public:
 			}
 		}
 
-		for (int i = 0; i < Enemies.size(); i++)
+		for (int i = 0; i < Enemies.size(); i++)// “G“¯m‚ª‚Ô‚Â‚©‚é‚Æ‹tŒü‚«‚É“®‚«o‚·
 		{
 			for (int j = i + 1; j < Enemies.size(); j++)
 			{
