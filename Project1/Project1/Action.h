@@ -204,20 +204,31 @@ public:
 		if (Enem1.Dir == DIR_RI)
 		{
 			//Enem1.Pos.X = Enem1.Pos.X + Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			Enem1.Pos.X = Enem1.Pos.X + Enem1.SpeedX; // 変更点
+			//Enem1.Pos.X = Enem1.Pos.X + Enem1.SpeedX; // 変更点
 			/*if (Enem1.Pos.X >= WIN_MAX_X - CELL)
 			{
 				Enem1.Dir = DIR_LE;
 			}*/
+			float dist = abs(MainChar.Pos.X - Enem1.Pos.X);
+			float speed = 1.5f + dist * 0.001f;
+			speed = min(speed, 4.0f); // 上限
+
+			Enem1.Pos.X += Enem1.SpeedX * speed;
+
 		}
 		else
 		{
 			//Enem1.Pos.X = Enem1.Pos.X - Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			Enem1.Pos.X = Enem1.Pos.X - Enem1.SpeedX; // 変更点
+			//Enem1.Pos.X = Enem1.Pos.X - Enem1.SpeedX; // 変更点
 			/*if (Enem1.Pos.X <= WIN_MIN_X)
 			{
 				Enem1.Dir = DIR_RI;
 			}*/
+			float dist = abs(MainChar.Pos.X - Enem1.Pos.X);
+			float speed = 1.5f + dist * 0.001f;
+			speed = min(speed, 4.0f); // 上限
+
+			Enem1.Pos.X -= Enem1.SpeedX * speed;
 		}
 		
 		int camLeft = -Sta_PosX;
@@ -250,20 +261,30 @@ public:
 		if (Enem2.Dir == DIR_RI)
 		{
 			//Enem2.Pos.X = Enem2.Pos.X + Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			Enem2.Pos.X = Enem2.Pos.X + Enem2.SpeedX; // 変更点
+			//Enem2.Pos.X = Enem2.Pos.X + Enem2.SpeedX; // 変更点
 			/*if (Enem2.Pos.X >= WIN_MAX_X - CELL)
 			{
 				Enem2.Dir = DIR_LE;
 			}*/
+			float dist = abs(MainChar.Pos.X - Enem2.Pos.X);
+			float speed = 1.5f + dist * 0.001f;
+			speed = min(speed, 4.0f); // 上限
+
+			Enem2.Pos.X += Enem2.SpeedX * speed;
 		}
 		else
 		{
 			//Enem2.Pos.X = Enem2.Pos.X - Mov.X; /* この敵はメインキャラのダッシュしたい気分に合わせて速度を変える */
-			Enem2.Pos.X = Enem2.Pos.X - Enem2.SpeedX; // 変更点
+			//Enem2.Pos.X = Enem2.Pos.X - Enem2.SpeedX; // 変更点
 			/*if (Enem2.Pos.X <= WIN_MIN_X)
 			{
 				Enem2.Dir = DIR_RI;
 			}*/
+			float dist = abs(MainChar.Pos.X - Enem2.Pos.X);
+			float speed = 1.5f + dist * 0.001f;
+			speed = min(speed, 4.0f); // 上限
+
+			Enem2.Pos.X -= Enem2.SpeedX * speed;
 		}
 
 		int camLeft2 = -Sta_PosX;
