@@ -232,86 +232,89 @@ Draw();
 ---
 ```mermaid
     classDiagram
-         direction LR
-    
-         class Main {
-             <<EntryPoint>>
-             +WinMain()
-         }
-    
-         class Sce <<Global>> {
-            +Out()
-        }
-   
-        class Tit <<Global>> {
-            +Out()
-        }
-   
-        class Act <<Global>> {
-            +Out()
-       }
-   
-        class InputSystem {
-            +Update(): InputState
-        }
-        class Physics {
-            +Update()
-        }
-        class EnemySystem {
-            +Update()
-        }
-        class Renderer {
-            +DrawPlayer()
-            +DrawEnemies()
-            +DrawStage()
-        }
-   
-        class MainCharacter <<Data>>
-        class Enemy <<Data>>
-        class MoveState <<Data>>
-        class InputState <<Data>>
-   
-        class Stage <<Global Resource>>
-        class Picture <<Global Resource>>
-        class Key <<Global Utility>>
-        class Font <<Global Utility>>
-        class Color <<Global Utility>>
-        class Sound <<Global Utility>>
-   
-   
-        Main --> Sce : "drives"
-        Sce --> Tit : "delegates to"
-        Sce --> Act : "delegates to"
-   
-        Act o-- InputSystem : "has a"
-        Act o-- Physics : "has a"
-        Act o-- EnemySystem : "has a"
-        Act o-- Renderer : "has a"
-   
-        Act ..> MainCharacter : "owns data"
-        Act ..> Enemy : "owns data"
-        Act ..> MoveState : "owns data"
-   
-        Tit ..> Key : "uses"
-        Tit ..> Stage : "uses"
-        Tit ..> Picture : "uses"
-        Tit ..> Font : "uses"
-        Tit ..> Color : "uses"
-   
-        InputSystem ..> Key : "uses"
-        InputSystem ..> InputState : "creates"
-   
-        Physics ..> MainCharacter : "modifies"
-        Physics ..> MoveState : "modifies"
-        Physics ..> Stage : "reads"
-   
-        EnemySystem ..> MainCharacter : "reads"
-        EnemySystem ..> Enemy : "modifies"
-   
-        Renderer ..> MainCharacter : "reads"
-        Renderer ..> Enemy : "reads"
-        Renderer ..> Stage : "reads"
-        Renderer ..> Picture : "uses"
+    direction LR
+
+    class Main {
+        EntryPoint
+        +WinMain()
+    }
+
+    class Sce {
+        Global
+        +Out()
+    }
+
+    class Tit {
+        Global
+        +Out()
+    }
+
+    class Act {
+        Global
+        +Out()
+    }
+
+    class InputSystem {
+        +Update(): InputState
+    }
+    class Physics {
+        +Update()
+    }
+    class EnemySystem {
+        +Update()
+    }
+    class Renderer {
+        +DrawPlayer()
+        +DrawEnemies()
+        +DrawStage()
+    }
+
+    class MainCharacter
+    class Enemy
+    class MoveState
+    class InputState
+
+    class Stage
+    class Picture
+    class Key
+    class Font
+    class Color
+    class Sound
+
+    Main --> Sce : drives
+    Sce --> Tit : delegates to
+    Sce --> Act : delegates to
+
+    Act o-- InputSystem : has
+    Act o-- Physics : has
+    Act o-- EnemySystem : has
+    Act o-- Renderer : has
+
+    Act ..> MainCharacter : owns
+    Act ..> Enemy : owns
+    Act ..> MoveState : owns
+
+    Tit ..> Key : uses
+    Tit ..> Stage : uses
+    Tit ..> Picture : uses
+    Tit ..> Font : uses
+    Tit ..> Color : uses
+
+    InputSystem ..> Key : uses
+    InputSystem ..> InputState : creates
+
+    Physics ..> MainCharacter : modifies
+    Physics ..> MoveState : modifies
+    Physics ..> Stage : reads
+
+    EnemySystem ..> MainCharacter : reads
+    EnemySystem ..> Enemy : modifies
+
+    Renderer ..> MainCharacter : reads
+    Renderer ..> Enemy : reads
+    Renderer ..> Stage : reads
+    Renderer ..> Picture : uses
+
 ```
 ---
 
@@ -333,6 +336,7 @@ Draw();
 * Visual Studio
 
 ---
+
 
 
 
