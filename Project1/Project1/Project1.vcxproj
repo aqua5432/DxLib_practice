@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\core\InputSystem.cpp" />
     <ClCompile Include="src\core\Renderer.cpp" />
+    <ClCompile Include="src\core\Scene.cpp" />
     <ClCompile Include="src\game\Action.cpp" />
     <ClCompile Include="src\game\EnemySystem.cpp" />
     <ClCompile Include="src\game\Physics.cpp" />
