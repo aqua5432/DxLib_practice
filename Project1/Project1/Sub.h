@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ProjConf.h"
 /*** FontƒNƒ‰ƒX ***/
 class
 {
