@@ -5,13 +5,17 @@
 #include<iostream>
 
 #include "DxLib.h"
-#include "ProjConf.h"
-#include "Sub.h"
-#include "Picture.h"
-#include "Stage.h"
-#include "Title.h"
-#include "Action.h"
-#include "Scene.h"
+#include "../src/config/ProjConf.h"
+#include "../src/system//Picture.h"
+#include "../src/game/Stage.h"
+#include "../src/game/Title.h"
+#include "../src/game/Action.h"
+#include "../src/core/Scene.h"
+#include "../src/system/Font.h"
+#include "../src/system/Color.h"
+#include "../src/system/FPS.h"
+#include "../src/system/Sound.h"
+#include "../src/system/Key.h"
 
 // ÉvÉçÉOÉâÉÄÇÕ WinMain Ç©ÇÁénÇ‹ÇËÇ‹Ç∑
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
