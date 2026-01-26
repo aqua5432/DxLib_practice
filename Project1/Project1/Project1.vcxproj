@@ -18,6 +18,41 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\InputSystem.cpp" />
+    <ClCompile Include="src\core\Renderer.cpp" />
+    <ClCompile Include="src\core\Scene.cpp" />
+    <ClCompile Include="src\game\Action.cpp" />
+    <ClCompile Include="src\game\EnemySystem.cpp" />
+    <ClCompile Include="src\game\Physics.cpp" />
+    <ClCompile Include="src\game\Stage.cpp" />
+    <ClCompile Include="src\game\Title.cpp" />
+    <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\system\Color.cpp" />
+    <ClCompile Include="src\system\Font.cpp" />
+    <ClCompile Include="src\system\FPS.cpp" />
+    <ClCompile Include="src\system\Key.cpp" />
+    <ClCompile Include="src\system\Picture.cpp" />
+    <ClCompile Include="src\system\Sound.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\config\ProjConf.h" />
+    <ClInclude Include="src\core\InputSystem.h" />
+    <ClInclude Include="src\core\Renderer.h" />
+    <ClInclude Include="src\core\Scene.h" />
+    <ClInclude Include="src\game\Action.h" />
+    <ClInclude Include="src\game\EnemySystem.h" />
+    <ClInclude Include="src\game\Entity.h" />
+    <ClInclude Include="src\game\Physics.h" />
+    <ClInclude Include="src\game\Stage.h" />
+    <ClInclude Include="src\game\Title.h" />
+    <ClInclude Include="src\system\Color.h" />
+    <ClInclude Include="src\system\Font.h" />
+    <ClInclude Include="src\system\FPS.h" />
+    <ClInclude Include="src\system\Key.h" />
+    <ClInclude Include="src\system\Picture.h" />
+    <ClInclude Include="src\system\Sound.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -128,24 +163,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Stage.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Action.h" />
-    <ClInclude Include="EnemySystem.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="InputSystem.h" />
-    <ClInclude Include="Physics.h" />
-    <ClInclude Include="Picture.h" />
-    <ClInclude Include="ProjConf.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Stage.h" />
-    <ClInclude Include="Sub.h" />
-    <ClInclude Include="Title.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
