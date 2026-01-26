@@ -1,6 +1,6 @@
 #include "InputSystem.h"
 #include "DxLib.h"
-#include "Sub.h"   // Keyグローバルが定義されてるやつ
+#include "Key.h"   // Keyグローバルが定義されてるやつ
 
 InputState InputSystem::Update()
 {

@@ -126,7 +126,7 @@ private:
 
 }Fps;
 
-/*** Keyクラス ***/
+/*** Keyクラス
 class
 {
 public:
@@ -155,6 +155,7 @@ public:
 private:
 
 }Key;
+***/
 
 #ifdef DEF_JOYPAD_VALID
 /*** Joypadクラス ***/

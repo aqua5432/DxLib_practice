@@ -1,4 +1,5 @@
 #pragma once
+#include "Key.h"
 /*** TitleƒNƒ‰ƒX ***/
 class
 {

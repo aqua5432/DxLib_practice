@@ -130,6 +130,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="InputSystem.cpp" />
+    <ClCompile Include="Key.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Stage.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="EnemySystem.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="InputSystem.h" />
+    <ClInclude Include="Key.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Picture.h" />
     <ClInclude Include="ProjConf.h" />
