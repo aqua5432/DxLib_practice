@@ -1,21 +1,5 @@
 #pragma once
 #include "ProjConf.h"
-/*** Fontクラス ***/
-class
-{
-public:
-	int FH[30 + 1];
-
-	void Read()
-	{
-		for (int i = 0; i < 30 + 1; i++)
-		{
-			FH[i] = CreateFontToHandle("ＭＳ　ゴシック", i, 6, DX_FONTTYPE_NORMAL);
-		}
-	}
-private:
-
-}Fon;
 
 /*** Colorクラス ***/
 class
@@ -125,47 +109,3 @@ public:
 private:
 
 }Fps;
-
-/*** Keyクラス
-class
-{
-public:
-	int input[256];		// キーボード入力情報
-
-	int GetKey()
-	{
-		char allkey[256];
-		GetHitKeyStateAll(allkey);
-		for (int i = 0; i < 256; i++)
-		{
-			if (allkey[i] == 1) // 特定のキーは押されているか
-			{
-				if (input[i] < DEF_KEY_PRESS_TIME) // 長押し上限まで押されているかどうか
-				{
-					input[i] = input[i] + 1; // 保存
-				}
-			}
-			else if (allkey[i] == 0) // 特定のキーは押されていないか
-			{
-				input[i] = 0;
-			}
-		}
-		return 0;
-	}
-private:
-
-}Key;
-***/
-
-#ifdef DEF_JOYPAD_VALID
-/*** Joypadクラス ***/
-class
-{
-public:
-	DINPUT_JOYSTATE input;				// JoyPad入力情報
-	unsigned char input_X_Z1 = 0;		// JoyPad「×」前回値
-
-private:
-
-}JPad;
-#endif /* DEF_JOYPAD_VALID */
