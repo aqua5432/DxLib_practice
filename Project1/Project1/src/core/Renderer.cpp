@@ -1,7 +1,11 @@
 #include "Renderer.h"
-#include "Entity.h"
-#include "Font.h"
-#include "Color.h"
+#include "../game/Entity.h"
+#include "../system/Font.h"
+#include "../system/Color.h"
+#include "../config/ProjConf.h"
+#include "DxLib.h"
+#include "../system/Picture.h"
+#include "../game/Stage.h"
 
 void Renderer::DrawPlayer(const MainCharacter& player)
 {

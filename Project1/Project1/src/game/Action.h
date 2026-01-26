@@ -1,11 +1,11 @@
 #pragma once
 #include <vector>
 #include "Entity.h"
-#include "InputSystem.h"
+#include "../core/InputSystem.h"
 #include "EnemySystem.h"
 #include "Physics.h"
-#include "Renderer.h"
-#include "Sound.h"
+#include "../core/Renderer.h"
+#include "../system/Sound.h"
 
 class ACTION
 {

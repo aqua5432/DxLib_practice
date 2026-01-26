@@ -1,8 +1,8 @@
 #pragma once
-#include "Entity.h"
-#include "Font.h"
-#include "Color.h"
-#include "Stage.h"
+#include "../game/Entity.h"
+#include "../system/Font.h"
+#include "../system/Color.h"
+#include "../game/Stage.h"
 
 class Renderer {
 public:

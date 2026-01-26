@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "ProjConf.h"
+#include "../config/ProjConf.h"
 #include <wtypes.h>
 struct MainCharacter
 {

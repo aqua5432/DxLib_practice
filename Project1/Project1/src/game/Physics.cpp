@@ -1,5 +1,5 @@
 #include "Physics.h"
-#include "ProjConf.h"
+#include "../config/ProjConf.h"
 #include "Stage.h"
 #include <cmath>
 

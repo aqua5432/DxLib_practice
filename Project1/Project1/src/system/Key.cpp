@@ -1,6 +1,6 @@
 #include "Key.h"
 #include "DxLib.h"
-#include "ProjConf.h"
+#include "../config/ProjConf.h"
 
 KeyClass Key;
 

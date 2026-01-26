@@ -1,4 +1,5 @@
 #include "EnemySystem.h"
+#include "../config/ProjConf.h"
 
 void EnemySystem::Update(std::vector<Enemy>& Enemies, MainCharacter& MainChar, int Sta_PosX) {
 	for (auto& e : Enemies)

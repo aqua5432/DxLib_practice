@@ -1,6 +1,6 @@
 #include "FPS.h"
 #include "DxLib.h"
-#include "ProjConf.h"
+#include "../config/ProjConf.h"
 
 FPSClass Fps;
 void FPSClass::FPSInit()

@@ -1,6 +1,6 @@
 #include "Color.h"
 #include "DxLib.h"
-#include "ProjConf.h"
+#include "../config/ProjConf.h"
 
 ColorClass Col;
 

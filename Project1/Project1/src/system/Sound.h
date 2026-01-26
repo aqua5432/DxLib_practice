@@ -1,5 +1,5 @@
 #pragma once
-#include "ProjConf.h"
+#include "../config/ProjConf.h"
 #include "DxLib.h"
 
 #ifdef DEF_SOUND_VALID

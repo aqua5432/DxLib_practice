@@ -5,8 +5,8 @@
 #include <algorithm>
 
 #include "DxLib.h"
-#include "ProjConf.h"
-#include "Picture.h"
+#include "../config/ProjConf.h"
+#include "../system/Picture.h"
 
 /*** StageƒNƒ‰ƒX ***/
 class Stage
