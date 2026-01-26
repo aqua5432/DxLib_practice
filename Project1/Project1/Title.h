@@ -1,6 +1,7 @@
 #pragma once
 #include "Key.h"
 #include "Font.h"
+#include "Color.h"
 /*** TitleƒNƒ‰ƒX ***/
 class
 {

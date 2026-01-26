@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Color.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="InputSystem.cpp" />
     <ClCompile Include="Key.cpp" />
@@ -138,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
+    <ClInclude Include="Color.h" />
     <ClInclude Include="EnemySystem.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Font.h" />

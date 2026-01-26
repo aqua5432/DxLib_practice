@@ -1,28 +1,6 @@
 #pragma once
 #include "ProjConf.h"
 
-/*** Colorクラス ***/
-class
-{
-public:
-	int Black;
-	int Red;
-	int Green;
-	int Blue;
-	int White;
-
-	void Read()
-	{
-		White = GetColor(255, 255, 255);
-		Red = GetColor(255, 0, 0);
-		Green = GetColor(0, 255, 0);
-		Blue = GetColor(0, 0, 255);
-		Black = GetColor(0, 0, 0);
-	}
-private:
-
-}Col;
-
 #ifdef DEF_SOUND_VALID
 /*** Soundクラス ***/
 class

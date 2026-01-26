@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "Font.h"
+#include "Color.h"
 
 class Renderer {
 public:
