@@ -50,7 +50,7 @@ https://qiita.com/nekoshiki0904/items/0d5bc01b6d1ac6d29495
 
 元コードでは、敵の移動速度がプレイヤー入力に依存しており、
 
-* プレイヤーがジャンプ中 → 敵の動きが不安定になる
+* プレイヤーがジャンプ中 → 敵の動きが不安定になる(ジャンプ移動中、進行方向と逆向きの敵が少し固まる)
 * プレイヤーの操作次第で敵AIの挙動が変わる
 
 という、本来あるべきでない依存関係が存在していました。
@@ -63,6 +63,13 @@ https://qiita.com/nekoshiki0904/items/0d5bc01b6d1ac6d29495
 * プレイヤー状態と無関係に動作する
 
 構造に修正しました。
+
+また、敵の動きの改善として、
+
+- 敵同士の衝突判定を実装し、敵同士がすり抜けないように
+- 敵の移動速度に加速度を持たせ、敵とプレイヤーが等速で動かないように
+
+実装しました。
 
 ---
 
@@ -223,6 +230,95 @@ Draw();
 という**ゲームループとして理想的な構造**に。
 
 ---
+## クラス構成図
+
+```mermaid
+    classDiagram
+    direction LR
+
+    class Main {
+        EntryPoint
+        +WinMain()
+    }
+
+    class Sce {
+        Global
+        +Out()
+    }
+
+    class Tit {
+        Global
+        +Out()
+    }
+
+    class Act {
+        Global
+        +Out()
+    }
+
+    class InputSystem {
+        +Update(): InputState
+    }
+    class Physics {
+        +Update()
+    }
+    class EnemySystem {
+        +Update()
+    }
+    class Renderer {
+        +DrawPlayer()
+        +DrawEnemies()
+        +DrawStage()
+    }
+
+    class MainCharacter
+    class Enemy
+    class MoveState
+    class InputState
+
+    class Stage
+    class Picture
+    class Key
+    class Font
+    class Color
+    class Sound
+
+    Main --> Sce : drives
+    Sce --> Tit : delegates to
+    Sce --> Act : delegates to
+
+    Act o-- InputSystem : has
+    Act o-- Physics : has
+    Act o-- EnemySystem : has
+    Act o-- Renderer : has
+
+    Act ..> MainCharacter : owns
+    Act ..> Enemy : owns
+    Act ..> MoveState : owns
+
+    Tit ..> Key : uses
+    Tit ..> Stage : uses
+    Tit ..> Picture : uses
+    Tit ..> Font : uses
+    Tit ..> Color : uses
+
+    InputSystem ..> Key : uses
+    InputSystem ..> InputState : creates
+
+    Physics ..> MainCharacter : modifies
+    Physics ..> MoveState : modifies
+    Physics ..> Stage : reads
+
+    EnemySystem ..> MainCharacter : reads
+    EnemySystem ..> Enemy : modifies
+
+    Renderer ..> MainCharacter : reads
+    Renderer ..> Enemy : reads
+    Renderer ..> Stage : reads
+    Renderer ..> Picture : uses
+
+```
+---
 
 ## このプロジェクトで得た知見
 
@@ -242,6 +338,13 @@ Draw();
 * Visual Studio
 
 ---
+
+
+
+
+
+
+
 
 
 
